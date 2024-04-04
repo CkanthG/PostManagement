@@ -8,7 +8,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/posts")
-class CaseController(
+class PostsController(
     val postsService: PostsService
 ) {
 

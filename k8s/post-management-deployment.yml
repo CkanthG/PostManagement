@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: case-management-config-map
+  name: post-management-config-map
   namespace: default
 data:
   MONGO_DB_HOST: "mongo-mongodb.default.svc.cluster.local"
@@ -18,7 +18,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: case-management-secret-map
+  name: post-management-secret-map
   namespace: default
 data:
   MONGO_DB_PASSWORD: "a0NNUUFDdmszSw=="
@@ -29,9 +29,9 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: case-management
+  name: post-management
   labels:
-    app: case-management
+    app: post-management
 spec:
   strategy:
     type: RollingUpdate
@@ -41,17 +41,17 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: case-management
+      app: post-management
   progressDeadlineSeconds: 300
   revisionHistoryLimit: 1
   template:
     metadata:
       labels:
-        app: case-management
+        app: post-management
     spec:
       containers:
-        - name: case-management
-          image: docker.io/sreekanthgaddoju/case-management:latest
+        - name: post-management
+          image: docker.io/sreekanthgaddoju/post-management:latest
           terminationMessagePolicy: FallbackToLogsOnError
           ports:
             - name: web
@@ -67,71 +67,71 @@ spec:
             - name: MONGO_DB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: MONGO_DB_HOST
             - name: MONGO_DB_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: MONGO_DB_PORT
             - name: MONGO_DB_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: MONGO_DB_DATABASE
             - name: MONGO_DB_USER
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: MONGO_DB_USER
             - name: MONGO_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: case-management-secret-map
+                  name: post-management-secret-map
                   key: MONGO_DB_PASSWORD
             - name: POSTS_QUEUE
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: POSTS_QUEUE
             - name: RABBITMQ_MASTER
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: RABBITMQ_MASTER
             - name: RABBITMQ_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: RABBITMQ_PORT
             - name: RABBITMQ_USER
               valueFrom:
                 configMapKeyRef:
-                  name: case-management-config-map
+                  name: post-management-config-map
                   key: RABBITMQ_USER
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: case-management-secret-map
+                  name: post-management-secret-map
                   key: RABBITMQ_PASSWORD
           volumeMounts:
-            - name: case-management-persistent-storage
-              mountPath: /var/lib/case-management
+            - name: post-management-persistent-storage
+              mountPath: /var/lib/post-management
       volumes:
-        - name: case-management-persistent-storage
+        - name: post-management-persistent-storage
           persistentVolumeClaim:
-            claimName: case-management-pv-claim
+            claimName: post-management-pv-claim
 ---
 
 kind: Service
 apiVersion: v1
 metadata:
-  name: case-management
+  name: post-management
   labels:
-    app: case-management
+    app: post-management
 spec:
   selector:
-    app: case-management
+    app: post-management
   ports:
     - protocol: TCP
       port: 80
@@ -141,9 +141,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: case-management
+  name: post-management
   labels:
-    app: case-management
+    app: post-management
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: letsencrypt-production
@@ -152,17 +152,17 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   rules:
-    - host: case-management
+    - host: post-management
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: case-management
+                name: post-management
                 port:
                   number: 80
   tls:
     - hosts:
         - store
-      secretName: case-management-cert
+      secretName: post-management-cert

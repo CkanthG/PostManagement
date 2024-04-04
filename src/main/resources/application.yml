@@ -1,6 +1,6 @@
 spring:
   application:
-    name: CaseManagement
+    name: PostManagement
   data:
     mongodb:
       host: ${MONGO_DB_HOST:localhost}

@@ -1,1 +1,1 @@
-rootProject.name = "CaseManagement"
+rootProject.name = "PostManagement"

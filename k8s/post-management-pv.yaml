@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: case-management-pv-volume
+  name: post-management-pv-volume
   labels:
     type: local
 spec:
@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: case-management-pv-claim
+  name: post-management-pv-claim
 spec:
   storageClassName: manual
   accessModes:

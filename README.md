@@ -1,4 +1,4 @@
-# Case Management Kotlin (Java 11) Application Deployment to Minikube using DockerHub.
+# Post Management Kotlin (Java 11) Application Deployment to Minikube using DockerHub.
 
 ## Minikube installation.
 Follow this link to install the Minikube on your local computer/laptop.
@@ -13,14 +13,14 @@ https://devopscube.com/deploy-mongodb-kubernetes/
 
 ## Build Docker image and push to DockerHub by below commands.
 
-docker build -t case-management:version .
+docker build -t post-management:version .
 
-docker tag case-management:latest dockerhubuser/case-management:latest
+docker tag post-management:latest dockerhubuser/post-management:latest
 
-docker push dockerhubuser/case-management:latest
+docker push dockerhubuser/post-management:latest
 
 ## Application Deployment on Minikube by using below commands.
 
-kubectl apply -f k8s/case-management-pv.yaml
+kubectl apply -f k8s/post-management-pv.yaml
 
-kubectl apply -f k8s/case-management-deployment.yml
+kubectl apply -f k8s/post-management-deployment.yml
