@@ -38,7 +38,7 @@ class PostsController(
     }
 
     @GetMapping("/all")
-    fun getAllPosts(): MutableList<Posts> {
+    fun getAllPosts(): List<Posts> {
         return postsService.getAllPosts();
     }
 }
