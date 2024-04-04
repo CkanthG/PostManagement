@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: CaseManagement
+  data:
+    mongodb:
+      host: ${MONGO_DB_HOST:localhost}
+      port: ${MONGO_DB_PORT:50350}
+      database: ${MONGO_DB_DATABASE:blog}
+      username: ${MONGO_DB_USER:root}
+      password: ${MONGO_DB_PASSWORD:kCMQACvk3K}
+      authentication-database: admin
+
+rabbitmq:
+  rabbitHost: ${RABBITMQ_MASTER:localhost}
+  rabbitPort: 5672
+  rabbitUser: ${RABBITMQ_USER:guest}
+  rabbitPassword: ${RABBITMQ_PASSWORD:guest}
+  postsQueue: ${POSTS_QUEUE:posts-queue}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
