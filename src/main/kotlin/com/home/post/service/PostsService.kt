@@ -10,17 +10,17 @@ import java.util.*
 
 @Service
 class PostsService(
-    val postsRepository: PostsRepository,
+    private val postsRepository: PostsRepository,
     private val channel: Channel,
     private val rabbitMQConfig: RabbitMQConfig
 ) {
 
     fun getPostsByBody(body: String): List<Posts> {
-        return postsRepository.findPostsByBody(body);
+        return postsRepository.findPostsByBody(body)
     }
 
     fun getPostsById(id: String): Optional<Posts> {
-        return postsRepository.findById(id);
+        return postsRepository.findById(id)
     }
 
     fun savePosts(postModel: PostModel): Posts {
@@ -34,40 +34,40 @@ class PostsService(
                 date = postModel.date
             )
         )
-        setUp()
-        channel.basicPublish("", rabbitMQConfig.postsQueue, null, posts.toString().toByteArray())
+        publishToRabbitMQ(posts)
         return posts
     }
 
     fun updatePosts(postModel: PostModel, id: String): Posts {
-        val posts = postsRepository.findById(id).let {
-            postsRepository.save(
-                Posts(
-                    it.get().id,
-                    title = postModel.title,
-                    body = postModel.body,
-                    category = postModel.category,
-                    likes = postModel.likes,
-                    tags = postModel.tags,
-                    date = postModel.date
-                )
-            )
+        val posts = postsRepository.findById(id).orElseThrow { IllegalArgumentException("Invalid post ID") }
+        posts.apply {
+            title = postModel.title
+            body = postModel.body
+            category = postModel.category
+            likes = postModel.likes
+            tags = postModel.tags
+            date = postModel.date
         }
-        setUp()
-        channel.basicPublish("", rabbitMQConfig.postsQueue, null, posts.toString().toByteArray())
-        return posts
+        val updatedPosts = postsRepository.save(posts)
+        publishToRabbitMQ(updatedPosts)
+        return updatedPosts
     }
 
     fun deletePosts(id: String) {
-        postsRepository.deleteById(id);
+        postsRepository.deleteById(id)
     }
 
-    fun getAllPosts(): MutableList<Posts> {
-        return postsRepository.findAll();
+    fun getAllPosts(): List<Posts> {
+        return postsRepository.findAll()
     }
 
-    @SuppressWarnings("MagicNumber")
-    fun setUp() {
+    private fun publishToRabbitMQ(posts: Posts) {
+        val message = posts.toString().toByteArray()
+        channel.basicPublish("", rabbitMQConfig.postsQueue, null, message)
+    }
+
+    @Suppress("MagicNumber")
+    private fun setUp() {
         val xMessageTTL = 172800000
         val queueArgs = mapOf("x-message-ttl" to xMessageTTL)
         channel.queueDeclareNoWait(rabbitMQConfig.postsQueue, false, false, false, queueArgs)

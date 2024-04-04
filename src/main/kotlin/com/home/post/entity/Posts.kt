@@ -9,10 +9,10 @@ import java.util.*
 data class Posts(
     @Id
     val id: ObjectId = ObjectId(),
-    val title: String = "",
-    val body: String = "",
-    val category: String = "",
-    val likes: Int = 0,
-    val tags: List<String> = emptyList(),
-    val date: Date = Date()
+    var title: String = "",
+    var body: String = "",
+    var category: String = "",
+    var likes: Int = 0,
+    var tags: List<String> = emptyList(),
+    var date: Date = Date()
 )
