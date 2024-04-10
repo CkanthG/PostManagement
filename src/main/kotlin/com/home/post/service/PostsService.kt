@@ -8,7 +8,7 @@ import com.rabbitmq.client.Channel
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.util.Optional
+import java.util.*
 
 @Service
 class PostsService(
@@ -23,12 +23,12 @@ class PostsService(
 
     fun getPostsByBody(body: String): List<Posts> {
         logger.info("PostsService:getPostsByBody execution started")
-        return postsRepository.findPostsByBody(body)
+        return postsRepository.findPostsByBody(body).takeIf { it.isNotEmpty() } ?: emptyList()
     }
 
     fun getPostsById(id: String): Optional<Posts> {
         logger.info("PostsService:getPostsById execution started")
-        return postsRepository.findById(id)
+        return postsRepository.findById(id).takeIf { it.isPresent } ?: Optional.empty()
     }
 
     fun savePosts(postModel: PostModel): Posts {
@@ -67,13 +67,20 @@ class PostsService(
 
     fun deletePosts(id: String) {
         logger.info("PostsService:deletePosts execution started")
+        if (!postsRepository.existsById(id)) {
+            throw NoSuchElementException("Post with ID $id not found")
+        }
         postsRepository.deleteById(id)
         logger.info("PostsService:deletePosts execution ended")
     }
 
     fun getAllPosts(): List<Posts> {
         logger.info("PostsService:getAllPosts execution started")
-        return postsRepository.findAll()
+        return postsRepository.findAll().takeIf { it.isNotEmpty() } ?: emptyList()
+    }
+
+    fun getPostsByBodyAndTitleAndCategory(body: String, title: String, category: String): Optional<Posts> {
+        return postsRepository.findPostsByBodyAndTitleAndCategory(body, title, category).takeIf { it.isPresent } ?: Optional.empty()
     }
 
     private fun publishToRabbitMQ(posts: Posts) {
