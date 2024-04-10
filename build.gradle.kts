@@ -33,6 +33,7 @@ dependencies {
     implementation("javax.validation:validation-api:2.0.0.Final")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.projectlombok:lombok:1.18.30")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.amqp:spring-rabbit-test")
 }
